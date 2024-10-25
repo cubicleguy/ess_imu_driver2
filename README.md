@@ -53,8 +53,8 @@
 - This software was developed and tested on the following:
 
 ```
-  ROS2:        Foxy, Humble
-  Description: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS
+  ROS2:        Foxy, Humble, Jazzy
+  Description: Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Ubuntu 24.04 LTS
   Hardware Platform: Core i7 PC, Raspberry Pi 3B+, RaspberryPi 4
 ```
 
