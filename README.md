@@ -49,7 +49,7 @@
     - G365PDC1, G365PDF1, G370PDF1, G370PDS0
     - G330PDG0, G366PDG0, G370PDG0, G370PDT0
     - G570PR20
-- ROS2 Foxy or Humble (via download) [ROS.org](https://docs.ros.org/en/humble/Installation.html)
+- ROS2 Foxy or Humble or Jazzy
 - This software was developed and tested on the following:
 
 ```
