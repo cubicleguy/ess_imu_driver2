@@ -83,6 +83,10 @@ class TimeCorrection {
  private:
   const int64_t ONE_SEC_NSEC = 1000000000;
   const int64_t HALF_SEC_NSEC = 500000000;
+  // For Gen2 IMUs freq = 46875Hz, max_count = 65535/46875 * 1e9
+  const int64_t GEN2_MAX = 1398080000;
+  // For Gen3 IMUs freq = 62500Hz, max_count = 65535/62500 * 1e9
+  const int64_t GEN3_MAX = 1048560000;
   int64_t max_count;
   int64_t almost_rollover;
   int64_t count_corrected;
@@ -104,8 +108,8 @@ class TimeCorrection {
 
 // Constructor
 TimeCorrection::TimeCorrection() {
-  max_count = 1048560000;
-  almost_rollover = max_count * 0.95;
+  max_count = GEN3_MAX;
+  almost_rollover = max_count;
   count_corrected = 0;
   count_old = 0;
   count_diff = 0;
@@ -127,13 +131,11 @@ TimeCorrection::TimeCorrection() {
 
 void TimeCorrection::set_imu(int epson_model) {
   // max_count depends on IMU model's reset counter freq
-  // For Gen2 IMUs freq = 46875Hz, max_count = 65535/46875 * 1e9
-  // For Gen3 IMUs freq = 62500Hz, max_count = 65535/62500 * 1e9
   is_gen2_imu = ((epson_model == G320PDG0) || (epson_model == G320PDGN) ||
                  (epson_model == G354PDH0) || (epson_model == G364PDCA) ||
                  (epson_model == G364PDC0));
 
-  max_count = (is_gen2_imu) ? 1398080000 : 1048560000;
+  max_count = (is_gen2_imu) ? GEN2_MAX : GEN3_MAX;
 }
 
 //=========================================================================
@@ -149,16 +151,15 @@ void TimeCorrection::set_imu(int epson_model) {
 rclcpp::Time TimeCorrection::get_stamp(int count) {
   rclcpp::Time now = rclcpp::Clock().now();
   time_sec_current = now.seconds();
-  time_nsec_current = now.nanoseconds();
+  time_nsec_current = now.nanoseconds() % ONE_SEC_NSEC;
 
-  // almost_rollover is arbitrarily set at ~95% of max_count
-  almost_rollover = max_count * 0.95;
+  // almost_rollover is arbitrarily set at ~96% of max_count
+  almost_rollover = max_count * 0.96;
 
   count_diff = count - count_old;
   if (count > almost_rollover) {
     rollover = true;
-  }
-  if (count_diff < 0) {
+  } else if (count_diff < 0) {
     if (rollover) {
       count_diff = count + (max_count - count_old);
       std::cout << "Warning: time_correction enabled but IMU reset counter "
@@ -169,7 +170,7 @@ rclcpp::Time TimeCorrection::get_stamp(int count) {
       count_diff = count;
       count_corrected = 0;
     }
-    rollover = 0;
+    rollover = false;
   }
   count_corrected = (count_corrected + count_diff) % ONE_SEC_NSEC;
   if ((time_sec_current != time_sec_old) && (count_corrected > HALF_SEC_NSEC)) {
@@ -177,11 +178,11 @@ rclcpp::Time TimeCorrection::get_stamp(int count) {
   } else if (((count_corrected - count_corrected_old) < 0) &&
              (time_nsec_current > HALF_SEC_NSEC)) {
     time_sec_current = time_sec_current + 1;
-    flag_imu_lead = 1;
+    flag_imu_lead = true;
   } else if (flag_imu_lead && (time_nsec_current > HALF_SEC_NSEC)) {
     time_sec_current = time_sec_current + 1;
   } else {
-    flag_imu_lead = 0;
+    flag_imu_lead = false;
   }
   rclcpp::Time ros_time = rclcpp::Time(time_sec_current, count_corrected);
   time_sec_old = time_sec_current;
