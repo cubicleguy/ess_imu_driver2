@@ -2,8 +2,8 @@
 Changelog for package ess_imu_driver2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.3 (2024-11-29)
+------------------
 * bugfix - TimeCorrection class for PPS input
 
 2.0.2 (2024-10-25)
