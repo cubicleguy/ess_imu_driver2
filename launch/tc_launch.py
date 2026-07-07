@@ -11,7 +11,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 name="serial_port",
-                default_value="/dev/ttyUSB0",
+                default_value="/dev/serial/by-id/usb-1a86_USB_Single_Serial_5909047977-if00",
                 description="Serial port name",
             ),
             DeclareLaunchArgument(
@@ -43,7 +43,7 @@ def generate_launch_description():
                 # 13: 40                      TAP>=64
                 # 14: 25                      TAP=128
                 # 15: 20                      TAP=128
-                default_value="4",
+                default_value="2",
                 description="Sets data output rate of IMU",
             ),
             DeclareLaunchArgument(
@@ -69,7 +69,7 @@ def generate_launch_description():
                 # 17: KAISER TAP128 Fc=100 Hz
                 # 18: KAISER TAP128 Fc=200 Hz
                 # 19: KAISER TAP128 Fc=400 Hz
-                default_value="5",
+                default_value="1",
                 description="Sets the IMU filter",
             ),
             DeclareLaunchArgument(
@@ -93,7 +93,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 name="time_correction_en",
-                default_value="true",
+                default_value="false",
                 description="Enables using IMU external counter reset function for timestamp with external 1PPS connected to IMU input pin for GPIO2/EXT",
             ),
             launch_ros.actions.Node(

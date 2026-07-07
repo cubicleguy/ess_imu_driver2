@@ -16,7 +16,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 name="frame_id",
-                default_value="velodyne",
+                default_value="imu_link",
                 description="IMU message frame_id field",
             ),
             DeclareLaunchArgument(
@@ -74,7 +74,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 name="quaternion_output_en",
-                default_value="1",
+                default_value="0",
                 description="Enables quaternion output for orientation",
             ),
             DeclareLaunchArgument(
@@ -93,7 +93,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 name="time_correction_en",
-                default_value="true",
+                default_value="false",
                 description="Enables using IMU external counter reset function for timestamp with external 1PPS connected to IMU input pin for GPIO2/EXT",
             ),
             launch_ros.actions.Node(

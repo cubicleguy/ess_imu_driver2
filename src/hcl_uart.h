@@ -37,6 +37,7 @@ int readComPort(unsigned char* bytesToRead, int size);
 int writeComPort(unsigned char* bytesToWrite, int size);
 int numBytesReadComPort(void);
 int purgeComPort(void);
+void set_rts(bool enable);
 
 #ifdef __cplusplus
 }

@@ -220,6 +220,7 @@ class ImuNode : public rclcpp::Node {
     // poll_rate_ must be at least 4000Hz (2x the highest IMU
     // output rate of 2000Hz)
     std::chrono::milliseconds ms((int)(1000.0 / poll_rate_));
+
     timer_ = this->create_wall_timer(ms, std::bind(&ImuNode::Spin, this));
   }
 
@@ -261,6 +262,33 @@ class ImuNode : public rclcpp::Node {
 
   // Time correction object
   TimeCorrection tc;
+
+  std::shared_ptr<rclcpp::Clock> clock_;
+
+  std::thread pulse_thread_;
+
+    // ---------- 脉冲线程（对齐 ROS 时间整秒） ----------
+  void pulse_loop() {
+      RCLCPP_INFO(this->get_logger(), "Pulse thread started.");
+      clock_ = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+      while (rclcpp::ok()) {
+          // 获取当前 ROS 时间
+          rclcpp::Time now = clock_->now();
+          // 计算下一个整秒时刻（秒数取整 +1）
+          int64_t next_sec = static_cast<int64_t>(now.seconds()) + 1;
+          rclcpp::Time target(next_sec, 0, clock_->get_clock_type());
+          // 等待至整秒
+          clock_->sleep_until(target);
+
+          // 生成脉冲：先置高
+          // RCLCPP_DEBUG(this->get_logger(), "Pulse at ROS time before %.3ld", clock_->now().nanoseconds());
+          set_rts(true);
+          // RCLCPP_DEBUG(this->get_logger(), "Pulse at ROS time %.3ld", clock_->now().nanoseconds());
+          // 脉冲宽度（基于系统时钟延时，简单但足够）
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));
+          set_rts(false);
+      }
+  }
 
   void ParseParams() {
     // NOTE: IMU settings are parsed when this node is launched using .py
@@ -469,6 +497,8 @@ class ImuNode : public rclcpp::Node {
         port_.c_str());
       one_sec.sleep();
     }
+    if(time_correction_)
+      pulse_thread_ = std::thread(&ImuNode::pulse_loop, this);
 
     while (rclcpp::ok() && !InitImu(&epson_sensor_, &options_)) {
       RCLCPP_WARN(this->get_logger(), "Retry to initialize the IMU...");
