@@ -43,7 +43,7 @@ def generate_launch_description():
                 # 13: 40                      TAP>=64
                 # 14: 25                      TAP=128
                 # 15: 20                      TAP=128
-                default_value="4",
+                default_value="2",
                 description="Sets data output rate of IMU",
             ),
             DeclareLaunchArgument(
@@ -93,7 +93,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 name="time_correction_en",
-                default_value="false",
+                default_value="true",
                 description="Enables using IMU external counter reset function for timestamp with external 1PPS connected to IMU input pin for GPIO2/EXT",
             ),
             launch_ros.actions.Node(

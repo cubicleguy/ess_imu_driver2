@@ -39,6 +39,24 @@ int openComPort(const char* comPortPath, speed_t baudRate);
 void closeComPort(void);
 int deviceOk(void);
 
+
+void set_rts(bool enable) {
+    if (fd_serial < 0) return;
+    int status;
+    if (ioctl(fd_serial, TIOCMGET, &status) < 0) {
+        perror("ioctl(TIOCMGET)");
+        return;
+    }
+    if (!enable) {
+        status |= TIOCM_RTS;
+    } else {
+        status &= ~TIOCM_RTS;
+    }
+    if (ioctl(fd_serial, TIOCMSET, &status) < 0) {
+        perror("ioctl(TIOCMSET)");
+    }
+}
+
 /*****************************************************************************
 ** Function name:       uartInit
 ** Description:         Initialize the COM port with the settings for
