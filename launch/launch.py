@@ -11,12 +11,12 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 name="serial_port",
-                default_value="/dev/serial/by-id/usb-1a86_USB_Single_Serial_5909047977-if00",
+                default_value="/dev/ttyUSB0",
                 description="Serial port name",
             ),
             DeclareLaunchArgument(
                 name="frame_id",
-                default_value="velodyne",
+                default_value="imu_link",
                 description="IMU message frame_id field",
             ),
             DeclareLaunchArgument(
