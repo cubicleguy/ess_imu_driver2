@@ -1,4 +1,4 @@
-"""Launch file for Epson IMU node publishing on /imu/data for ess_imu_driver2 package"""
+"""Launch file for Epson IMU node publishing on /imu/data for ess_imu_driver2 package this enables time_correction and requires a valid 1PPS signal to be connected to the IMU GPIO2/EXT pin"""
 
 from launch import LaunchDescription
 import launch_ros.actions
@@ -18,11 +18,6 @@ def generate_launch_description():
                 name="frame_id",
                 default_value="imu_link",
                 description="IMU message frame_id field",
-            ),
-            DeclareLaunchArgument(
-                name="burst_polling_rate",
-                default_value="4000.0",
-                description="Set to atleast 2x the output rate of IMU. Should not need to change.",
             ),
             DeclareLaunchArgument(
                 name="imu_dout_rate",
@@ -105,7 +100,6 @@ def generate_launch_description():
                         "__log_level": "INFO",
                         "serial_port": LaunchConfiguration("serial_port"),
                         "frame_id": LaunchConfiguration("frame_id"),
-                        "burst_polling_rate": LaunchConfiguration("burst_polling_rate"),
                         "imu_dout_rate": LaunchConfiguration("imu_dout_rate"),
                         "imu_filter_sel": LaunchConfiguration("imu_filter_sel"),
                         "quaternion_output_en": LaunchConfiguration(

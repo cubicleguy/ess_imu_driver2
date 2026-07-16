@@ -7,6 +7,10 @@
 - [Test machines](#test-machines)
 - [Requirements](#requirements)
 - [When using the UART Interface](#when-using-the-uart-interface)
+  - [Using USB-UART bridges](#using-usb-uart-bridges)
+  - [Modifying *latency_timer* by udev mechanism](#modifying-latency_timer-by-udev-mechanism)
+  - [Modifying *latency_timer* by sysfs mechanism](#modifying-latency_timer-by-sysfs-mechanism)
+  - [Modifying *low_latency* flag using *setserial* utility](#modifying-low_latency-flag-using-setserial-utility)
 - [When using SPI Interface on RaspberryPi](#when-using-spi-interface-on-raspberrypi)
 - [Compiling the software](#compiling-the-software)
 - [Important for configuring delays](#important-for-configuring-delays)
@@ -59,6 +63,56 @@ sudo apt-get upgrade
 
 ```
 const char *IMUSERIAL = "/dev/ttyxxx";
+```
+
+## Using USB-UART bridges
+
+- If your connection between the Epson IMU UART interface and the Linux host is by FTDI ICs, the `latency_timer` setting in the FTDI driver may be large i.e. typically 16 (msec).
+- This may affect the UART latency and maximum IMU data rates on your host system.
+- There are 3 methods listed below to reduce the impact of this latency.
+
+## Modifying *latency_timer* by udev mechanism
+
+- [udev](https://wiki.debian.org/udev) is a device manager for Linux that can dynamically create and remove devices in *userspace* and run commands when new devices appear or other events
+- Create a udev rule to automatically set the `latency_timer` to 1 when an FTDI USB-UART device is plugged in to a USB port.
+- For example, the following text file named `99-ftdi_sio.rules` can be put in the `/etc/udev/rules.d` directory
+
+**NOTE:** This requires root (sudo) access to create or copy file in `/etc/udev/rules.d`
+**NOTE:** This is the recommended method because it is automatic when device is plugged in, but it affects ALL FTDI USB-UART devices on the system
+
+```
+SUBSYSTEM=="usb-serial", DRIVER=="ftdi_sio", ATTR{latency_timer}="1"
+```
+
+## Modifying *latency_timer* by sysfs mechanism
+
+- The example below reads the `latency_timer` setting for `/dev/ttyUSB0` which returns 16msec.
+- Then, it sets the `latency_timer` to 1msec, and confirms it by read back.
+
+**NOTE: This may require root (sudo su) access on your system to execute.**
+
+```
+cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+16
+echo 1 > /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+1
+```
+
+## Modifying *low_latency* flag using *setserial* utility
+
+- The example below sets the `low_latency` flag for `/dev/ttyUSB0`.
+- This will have the same effect as setting the `latency_timer` to 1msec.
+- This can be confirmed by running the `setserial` command again.
+
+```
+user@user:~$ setserial /dev/ttyUSB0
+/dev/ttyUSB0, UART: unknown, Port: 0x0000, IRQ: 0
+
+user@user:~$ setserial /dev/ttyUSB0 low_latency
+
+user@user:~$ setserial /dev/ttyUSB0
+/dev/ttyUSB0, UART: unknown, Port: 0x0000, IRQ: 0, Flags: low_latency
 ```
 
 # When using SPI Interface on RaspberryPi
@@ -321,4 +375,5 @@ sensor_epsonUart.h          - Header for Epson UART functions.
 2023-11-08  v1.0.0    - Merge UART Driver v1.9 and SPI Driver v1.7, and minor updates
 2024-07-17  v2.0.0    - Add runtime auto-detect/select of IMU model, re-organize code structure for better consistency
 2024-09-05  v2.0.1    - Minor bugfix for swapped bits in SIG_CTRL_LO, BURST_CTRL1_HI, BURST_CTRL2_HI for gyro_delta_out & accel_delta_out
+2025-10-07  v2.1.0    - Add definitions to support G355QDG0
 ```

@@ -197,11 +197,24 @@ int main(int argc, char *argv[]) {
   struct tm tm = *localtime(&date);
   char EpsonlogName[128];
 
+  // Safely format the filename
+  int n = snprintf(EpsonlogName, sizeof(EpsonlogName),
+                   "EpsonLog_%s_%4d-%02d-%02d_T%02d-%02d-%02d.csv", prod_id,
+                   tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
+                   tm.tm_min, tm.tm_sec);
+
+  if (n < 0 || n >= (int)sizeof(EpsonlogName)) {
+    fprintf(stderr, "Log filename truncated or formatting failed\n");
+    return -1;
+  }
+
   // Create Epson IMU Data Log
-  sprintf(EpsonlogName, "EpsonLog_%s_%4d-%02d-%02d_T%02d-%02d-%02d.csv",
-          prod_id, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
-          tm.tm_min, tm.tm_sec);
   FILE *EpsonLog = fopen(EpsonlogName, "w");
+  if (EpsonLog == NULL) {
+    printf("Failed to open Epson log file");
+    return -1;
+  }
+
   fprintf(EpsonLog, "#PRODUCT_ID: %s", prod_id);
   fprintf(EpsonLog, "\r\n#SERIAL_ID: %s", ser_id);
   fprintf(EpsonLog, "\r\n#Date: %s", ctime(&date));

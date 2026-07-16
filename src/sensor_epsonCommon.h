@@ -296,6 +296,7 @@ enum EpsonModels {
   G370PDG0,
   G370PDT0,
   G570PR20,
+  G355QDG0,
   G_UNKNOWN,
 };
 
