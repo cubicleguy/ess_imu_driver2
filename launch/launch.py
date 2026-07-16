@@ -20,11 +20,6 @@ def generate_launch_description():
                 description="IMU message frame_id field",
             ),
             DeclareLaunchArgument(
-                name="burst_polling_rate",
-                default_value="4000.0",
-                description="Set to atleast 2x the output rate of IMU. Should not need to change.",
-            ),
-            DeclareLaunchArgument(
                 name="imu_dout_rate",
                 # value: output rate (Hz)     Recommended Moving Average Filter
                 # 0: 2000                     TAP>=0
@@ -105,7 +100,6 @@ def generate_launch_description():
                         "__log_level": "INFO",
                         "serial_port": LaunchConfiguration("serial_port"),
                         "frame_id": LaunchConfiguration("frame_id"),
-                        "burst_polling_rate": LaunchConfiguration("burst_polling_rate"),
                         "imu_dout_rate": LaunchConfiguration("imu_dout_rate"),
                         "imu_filter_sel": LaunchConfiguration("imu_filter_sel"),
                         "quaternion_output_en": LaunchConfiguration(

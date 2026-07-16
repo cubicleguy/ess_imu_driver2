@@ -378,6 +378,27 @@ struct EpsonProperties epson_sensors[] = {
       .delay_filter_ms = (0),
       .delay_atti_profile_ms = (0),
     },
+  [G355QDG0] =
+    {
+      .model = G355QDG0,
+      .product_id = "G355QDG0",
+      .feature_flags = (HAS_RANGE_OVER | HAS_ARANGE | HAS_INITIAL_BACKUP),
+      .gyro_sf_dps = (1.0 / 66),
+      .accl_sf_mg = (1.0 / 4),
+      .tempc_sf_degc = (0.00390625),
+      .tempc_25c_offset = (0),
+      .rstcnt_sf_micros = (16000),
+      .ang_sf_deg = (0),
+      .qtn_sf = (0),
+      .dlta0_sf_deg = (0),
+      .dltv0_sf_mps = (0),
+      .delay_reset_ms = (800),
+      .delay_flashtest_ms = (30),
+      .delay_flashbackup_ms = (300),
+      .delay_selftest_ms = (80),
+      .delay_filter_ms = (1),
+      .delay_atti_profile_ms = (0),
+    },
   [G_UNKNOWN] =
     {
       .model = G_UNKNOWN,

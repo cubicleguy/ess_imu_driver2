@@ -47,7 +47,7 @@
   - At the time software release:
     - G320PDG0, G320PDGN, G354PDH0, G364PDCA, G364PDC0
     - G365PDC1, G365PDF1, G370PDF1, G370PDS0
-    - G330PDG0, G366PDG0, G370PDG0, G370PDT0
+    - G330PDG0, G366PDG0, G370PDG0, G370PDT0, G355QDG0
     - G570PR20
 - ROS2 Foxy or Humble or Jazzy
 - This software was developed and tested on the following:
@@ -60,8 +60,8 @@
 
 ### For the UART Interface:
 
-- Epson USB evaluation board or equivalent FTDI USB-Serial interface connecting the Epson IMU to ROS host (tty/serial) [See M-G32EV041](https://global.epson.com/products_and_drivers/sensing_system/technical_info/evaluation_tools/)
-- Alternatively, a direct connection from the Epson IMU to the ROS platform supporting a 3.3V CMOS compatible UART interface [See M-G32EV031](https://global.epson.com/products_and_drivers/sensing_system/technical_info/evaluation_tools/).
+- Epson USB evaluation board or equivalent FTDI USB-Serial interface connecting the Epson IMU to ROS host (tty/serial) [See M-G32EV041](https://www.epsondevice.com/sensing/en/pdf/m-d32ev041_usb_evaluation_cable_interface_board_datasheet_e_rev20250530.pdf)
+- Alternatively, a direct connection from the Epson IMU to the ROS platform supporting a 3.3V CMOS compatible UART interface [See M-G32EV031](https://www.epsondevice.com/sensing/en/pdf/m-g32ev031_usb_evaluation_cable_interface_breakout_boaed_datasheet_e_rev20250526.pdf).
 
 ### For the SPI Interface:
 
@@ -69,7 +69,7 @@
 - For Raspberry Pi, if not enabled already the SPI interface can be enabled using `raspi-config` or equivalent.
 - This code uses a separate GPIO to manually control CS# chipselect instead of the chipselect assigned to by the RapsberryPi SPI interface.
   - The chipselect assigned by the HW SPI interface should also work, but has not been thoroughly tested.
-- Epson Breakout evaluation board or some equivalent is required to connect to the 3.3V CMOS compatible pins of the ROS host (SPI & GPIOs) [See M-G32EV031](https://global.epson.com/products_and_drivers/sensing_system/technical_info/evaluation_tools/)
+- Epson Breakout evaluation board or some equivalent is required to connect to the 3.3V CMOS compatible pins of the ROS host (SPI & GPIOs) [See M-G32EV031](https://www.epsondevice.com/sensing/en/products/imu/evaluation/)
 
 ## How do I use the driver?
 
@@ -309,7 +309,6 @@ user@RPI4-RC:~/ros2_ws$ ros2 launch ess_imu_driver2 launch.py
 [INFO] [ess_imu_driver2_node-1]: process started with pid [853041]
 [ess_imu_driver2_node-1] [INFO] [1722455573.931168183] [epson_node]: frame_id:                  imu_link
 [ess_imu_driver2_node-1] [INFO] [1722455573.931458588] [epson_node]: time_correction_en:        0
-[ess_imu_driver2_node-1] [INFO] [1722455573.931508699] [epson_node]: burst_polling_rate:        4000.0
 [ess_imu_driver2_node-1] [WARN] [1722455573.931558883] [epson_node]: Not specified param temperature_topic. Set default value:       /epson_imu/tempc
 [ess_imu_driver2_node-1] [WARN] [1722455573.931592180] [epson_node]: Not specified param ext_trigger_en. Set default value:  0
 [ess_imu_driver2_node-1] [INFO] [1722455573.931624976] [epson_node]: imu_dout_rate:             4
@@ -541,7 +540,3 @@ LICENSE.txt    <== description of the applicable licenses
 package.xml    <== colcon package description
 README.md      <== general README
 ```
-
-## References
-
-1. https://index.ros.org/doc/ros2/
