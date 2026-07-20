@@ -2,8 +2,8 @@
 Changelog for package ess_imu_driver2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.4 (2026-07-20)
+------------------
 * Moved sensor sampling & publishing to background thread, added G355 support
 
 2.0.3 (2024-11-29)
